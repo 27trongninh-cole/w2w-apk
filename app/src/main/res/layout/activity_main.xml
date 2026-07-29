@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center_horizontal">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="AoV Mod Installer"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:id="@+id/tvShizukuStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Đang kiểm tra Shizuku..."
+        android:textAlignment="center"
+        android:padding="12dp"
+        android:background="#EEEEEE"
+        android:layout_marginBottom="16dp"/>
+
+    <Button
+        android:id="@+id/btnGrantShizuku"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cấp quyền Shizuku"
+        android:layout_marginBottom="24dp"/>
+
+    <TextView
+        android:id="@+id/tvSelectedFile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Chưa chọn file mod (.zip)"
+        android:textAlignment="center"
+        android:layout_marginBottom="12dp"/>
+
+    <Button
+        android:id="@+id/btnPickZip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Chọn file mod (.zip)"
+        android:layout_marginBottom="12dp"/>
+
+    <Button
+        android:id="@+id/btnInstall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cài mod"
+        android:enabled="false"
+        android:layout_marginBottom="24dp"/>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginBottom="12dp"/>
+
+    <TextView
+        android:id="@+id/tvLastLog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textAlignment="center"
+        android:textColor="#555555"/>
+
+</LinearLayout>
