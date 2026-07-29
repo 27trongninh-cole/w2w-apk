@@ -56,6 +56,12 @@ object ModInstaller {
             throw ModInstallException("Lỗi khi giải nén zip: ${e.javaClass.simpleName}: ${e.message}", e)
         }
 
+        // zip4j giữ nguyên permission gốc lưu trong file zip (khác java.util.zip trước đây).
+        // Nếu zip được nén với permission chặt, tiến trình shell chạy qua Shizuku có thể
+        // không đọc được -> reset về quyền đọc/ghi/execute đầy đủ trước khi copy.
+        log("Đang chuẩn hóa quyền file đã giải nén...")
+        fixPermissionsRecursively(tmpRoot)
+
         log("Đang tìm thư mục Resources trong file mod...")
         val resourcesDir = ZipUtils.findResourcesDir(tmpRoot)
             ?: throw ModInstallException(
@@ -93,5 +99,14 @@ object ModInstaller {
         }
 
         log("Copy hoàn tất. Cài mod thành công vào $targetResources")
+    }
+
+    private fun fixPermissionsRecursively(root: File) {
+        root.setReadable(true, false)
+        root.setExecutable(true, false)
+        root.setWritable(true, false)
+        if (root.isDirectory) {
+            root.listFiles()?.forEach { fixPermissionsRecursively(it) }
+        }
     }
 }
