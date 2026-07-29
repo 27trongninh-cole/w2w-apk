@@ -15,7 +15,7 @@ object ModInstaller {
      *
      * [log] được gọi để ghi lại tiến trình từng bước, hữu ích khi hiện bảng log lỗi.
      */
-    fun install(context: Context, zipUri: Uri, log: (String) -> Unit) {
+    fun install(context: Context, zipUri: Uri, password: String? = null, log: (String) -> Unit) {
         log("Kiểm tra trạng thái Shizuku...")
         when (ShizukuHelper.currentState()) {
             ShizukuHelper.State.NOT_RUNNING -> throw ModInstallException(
@@ -47,7 +47,9 @@ object ModInstaller {
 
         log("Đang giải nén (${zipFile.length()} bytes)...")
         try {
-            ZipUtils.extractZip(zipFile, tmpRoot)
+            ZipUtils.extractZip(zipFile, tmpRoot, password)
+        } catch (e: PasswordRequiredException) {
+            throw e
         } catch (e: ModInstallException) {
             throw e
         } catch (e: Exception) {

@@ -96,14 +96,14 @@ class MainActivity : AppCompatActivity() {
         binding.btnInstall.isEnabled = state == ShizukuHelper.State.READY && pickedZipUri != null
     }
 
-    private fun onInstallClicked() {
+    private fun onInstallClicked(password: String? = null) {
         val uri = pickedZipUri ?: return
         logBuilder.clear()
         setBusy(true)
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                ModInstaller.install(applicationContext, uri) { step ->
+                ModInstaller.install(applicationContext, uri, password) { step ->
                     logBuilder.appendLine("[${timestamp()}] $step")
                     runOnUiThread { binding.tvLastLog.text = step }
                 }
@@ -111,6 +111,11 @@ class MainActivity : AppCompatActivity() {
                     setBusy(false)
                     binding.tvLastLog.text = "Hoàn tất."
                     showSuccessDialog(logBuilder.toString())
+                }
+            } catch (e: PasswordRequiredException) {
+                runOnUiThread {
+                    setBusy(false)
+                    promptForPassword(e.message ?: "File mod có mật khẩu.")
                 }
             } catch (e: Exception) {
                 val fullLog = buildFullErrorLog(e)
@@ -121,6 +126,23 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun promptForPassword(message: String) {
+        val input = android.widget.EditText(this).apply {
+            inputType = android.text.InputType.TYPE_CLASS_TEXT or
+                android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
+            hint = "Mật khẩu file mod"
+        }
+        AlertDialog.Builder(this)
+            .setTitle("Cần mật khẩu")
+            .setMessage(message)
+            .setView(input)
+            .setPositiveButton("Cài đặt") { _, _ ->
+                onInstallClicked(input.text.toString())
+            }
+            .setNegativeButton("Hủy", null)
+            .show()
     }
 
     private fun buildFullErrorLog(e: Exception): String {
