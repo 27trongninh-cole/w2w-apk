@@ -35,7 +35,7 @@ object ShizukuHelper {
      */
     fun runCommand(command: String): Triple<Int, String, String> {
         try {
-            val process = Shizuku.newProcess(arrayOf("sh", "-c", command), null, null)
+            val process = newProcessViaReflection(arrayOf("sh", "-c", command), null, null)
             val stdout = BufferedReader(InputStreamReader(process.inputStream)).readText()
             val stderr = BufferedReader(InputStreamReader(process.errorStream)).readText()
             val exitCode = process.waitFor()
@@ -46,5 +46,21 @@ object ShizukuHelper {
                 e
             )
         }
+    }
+
+    /**
+     * Từ bản dev.rikka.shizuku:api 13.x, Shizuku.newProcess(...) đã bị đổi thành
+     * private nên không gọi trực tiếp được nữa. Dùng reflection để truy cập lại
+     * đúng phương thức nội bộ này (cùng cơ chế mà Shizuku dùng trước đây).
+     */
+    private fun newProcessViaReflection(cmd: Array<String>, env: Array<String>?, dir: String?): Process {
+        val method = Shizuku::class.java.getDeclaredMethod(
+            "newProcess",
+            Array<String>::class.java,
+            Array<String>::class.java,
+            String::class.java
+        )
+        method.isAccessible = true
+        return method.invoke(null, cmd, env, dir) as Process
     }
 }
