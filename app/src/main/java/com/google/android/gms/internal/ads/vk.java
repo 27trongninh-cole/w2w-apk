@@ -20,21 +20,36 @@ public final class vk {
         // an toàn với mọi cách chia trang của encoder, dùng lại logic ghép packet đã kiểm chứng.
         c6.a packetReader = new c6.a(cVar);
         byte[] idPacket = readOnePacket(packetReader);
-        byte[] commentPacket = readOnePacket(packetReader); // không dùng tới, chỉ cần đọc qua để bỏ
+        byte[] commentPacket = readOnePacket(packetReader);
         byte[] setupPacket = readOnePacket(packetReader);
 
         if (idPacket == null) throw new UnsupportedOperationException("The file has no identification header.");
         if (setupPacket == null) throw new UnsupportedOperationException("The file has no setup header.");
 
         v5.a idReader = v5.a.e(idPacket);
-        idReader.f(8);   // packet type
-        idReader.f(24); idReader.f(24); // chữ "vorbis" (6 byte)
+        idReader.f(8);
+        idReader.f(24); idReader.f(24);
         this.f8888c = new a6.a(this, idReader);
 
         v5.a setupReader = v5.a.e(setupPacket);
-        setupReader.f(8);   // packet type
-        setupReader.f(24); setupReader.f(24); // chữ "vorbis" (6 byte)
-        this.f8889d = new a6.d(this, setupReader);
+        setupReader.f(8);
+        setupReader.f(24); setupReader.f(24);
+        try {
+            this.f8889d = new a6.d(this, setupReader);
+        } catch (RuntimeException e) {
+            throw new RuntimeException(
+                "DEBUG: idPacket.len=" + idPacket.length + " hex=" + hex(idPacket, 16) +
+                " | commentPacket.len=" + (commentPacket == null ? -1 : commentPacket.length) + " hex=" + hex(commentPacket, 16) +
+                " | setupPacket.len=" + setupPacket.length + " hex=" + hex(setupPacket, 16) +
+                " || goc: " + e.getMessage(), e);
+        }
+    }
+
+    private static String hex(byte[] b, int n) {
+        if (b == null) return "null";
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < Math.min(n, b.length); i++) sb.append(String.format("%02X ", b[i]));
+        return sb.toString();
     }
 
     private static byte[] readOnePacket(c6.a pr) {
