@@ -1,0 +1,44 @@
+name: Build Test APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew || true
+
+      - name: Build debug APK
+        run: |
+          gradle wrapper --gradle-version 8.7 || true
+          if [ -f gradlew ]; then ./gradlew assembleDebug --no-daemon --stacktrace
+          else gradle assembleDebug --no-daemon --stacktrace; fi
+
+      - name: Rename APK
+        run: |
+          find . -name "*.apk"
+          mkdir -p out
+          cp app/build/outputs/apk/debug/app-debug.apk out/W2WTest-debug.apk
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: w2wtest-apk
+          path: out/W2WTest-debug.apk
+          retention-days: 14
