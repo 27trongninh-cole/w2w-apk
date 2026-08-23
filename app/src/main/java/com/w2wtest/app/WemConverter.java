@@ -162,11 +162,7 @@ public class WemConverter {
         log.log("Setup blob: " + setupBlob.length + " byte.");
 
         // ---- Audio packet: dung dung logic that (bo bit packet-type + mode-selector, KHONG copy nguyen) ----
-        // QUAN TRONG: dung LAI packetReader da duoc vk dung de doc 3 header packet (id/comment/
-        // setup), KHONG tao c6.a moi. Ly do: c6.a doc truoc (peek) 1 page ke tiep vao f1915c;
-        // neu tao instance moi o day, page da duoc "doc truoc" trong luc doc header se bi bo qua
-        // mat, lam mat/lech du lieu audio packet dau tien.
-        c6.a packetReader = vkVar.f8891f;
+        c6.a packetReader = new c6.a(cVar);
         v5.a packetOut = v5.a.d();
         v5.a tmpD = v5.a.d();
         while (!packetReader.f1917e) {
