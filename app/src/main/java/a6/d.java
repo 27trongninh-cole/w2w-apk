@@ -57,7 +57,7 @@ public final class d extends j0 {
                 aVar.h(i10, z8 ? 1 : 0);
                 v5.a aVarD = v5.a.d();
                 if (((v5.a) this.f10944a).f(24) != 5653314) {
-                    throw new UnsupportedOperationException("The code book sync pattern is not correct.");
+                    throw new UnsupportedOperationException("The code book sync pattern is not correct. DEBUG: i8(codebook)=" + i8 + " i9(template)=" + i9 + " i10(bitpos)=" + i10 + " actualReaderPos=" + ((v5.a) this.f10944a).f15030d);
                 }
                 int i12 = aVarD.i(16, 4, (v5.a) this.f10944a);
                 int i13 = aVarD.i(24, 14, (v5.a) this.f10944a);
