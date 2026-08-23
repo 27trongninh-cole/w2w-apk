@@ -6,6 +6,7 @@ import e.j0;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public final class d extends j0 {
@@ -33,10 +34,10 @@ public final class d extends j0 {
     }
 
     public d(vk vkVar, v5.a aVar) {
+        super(vkVar, aVar);
         int i7;
         boolean z6;
         int iPow;
-        super(vkVar, aVar);
         this.f154c = new HashMap();
         int i8 = 0;
         this.f156e = 0;
@@ -180,7 +181,7 @@ public final class d extends j0 {
             z7 = true;
         }
         this.f155d = aVar.f15030d;
-        this.f154c.entrySet().removeIf(entry -> ((ArrayList) entry.getValue()).isEmpty());
+        this.f154c.entrySet().removeIf(entryObj -> ((ArrayList) ((Map.Entry) entryObj).getValue()).isEmpty());
         this.f154c.values().forEach(new Consumer() {
             @Override
             public void accept(Object obj) {

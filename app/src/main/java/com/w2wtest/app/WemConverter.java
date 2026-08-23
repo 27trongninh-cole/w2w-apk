@@ -46,7 +46,8 @@ public class WemConverter {
         v5.a aVarD = v5.a.d();
         aVarD.j(8, setupData.f154c.size() - 1);
         int i19 = 0;
-        for (Map.Entry entry : setupData.f154c.entrySet()) {
+        for (Object entryObj : setupData.f154c.entrySet()) {
+            Map.Entry entry = (Map.Entry) entryObj;
             int key = (Integer) entry.getKey();
             aVarD.j(10, ((a6.c) ((ArrayList) entry.getValue()).get(0)).f152a);
             if (i19 != key) throw new IllegalArgumentException("Codebook thu tu sai: " + i19 + " != " + key);
