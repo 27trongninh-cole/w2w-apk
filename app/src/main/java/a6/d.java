@@ -196,6 +196,12 @@ public final class d extends j0 {
             z7 = true;
         }
         this.f155d = aVar.f15030d;
+        StringBuilder missing = new StringBuilder();
+        for (int k = 0; k < iF; k++) {
+            ArrayList lst = (ArrayList) this.f154c.get(Integer.valueOf(k));
+            if (lst == null || lst.isEmpty()) missing.append(k).append(",");
+        }
+        DEBUG_LOG.append("KHONG MATCH duoc codebook index: [").append(missing.toString()).append("] / tong ").append(iF).append("\n");
         this.f154c.entrySet().removeIf(entryObj -> ((ArrayList) ((Map.Entry) entryObj).getValue()).isEmpty());
         this.f154c.values().forEach(new Consumer() {
             @Override
@@ -208,7 +214,7 @@ public final class d extends j0 {
             }
         });
         if (this.f154c.size() != iF) {
-            throw new UnsupportedOperationException("Invalid codebook");
+            throw new UnsupportedOperationException("Invalid codebook. " + DEBUG_LOG.toString());
         }
     }
 }

@@ -1,6 +1,9 @@
 package com.w2wtest.app;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,6 +28,7 @@ public class MainActivity extends Activity {
         logView = findViewById(R.id.txtLog);
         Button pick = findViewById(R.id.btnPick);
         Button convert = findViewById(R.id.btnConvert);
+        Button copyLog = findViewById(R.id.btnCopyLog);
 
         try {
             System.loadLibrary("mwem");
@@ -42,6 +46,14 @@ public class MainActivity extends Activity {
         });
 
         convert.setOnClickListener(v -> doConvert());
+
+        copyLog.setOnClickListener(v -> {
+            String text = logView.getText().toString();
+            ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("W2W Log", text);
+            clipboard.setPrimaryClip(clip);
+            Toast.makeText(this, "Đã copy log (" + text.length() + " ký tự)", Toast.LENGTH_SHORT).show();
+        });
     }
 
     @Override
