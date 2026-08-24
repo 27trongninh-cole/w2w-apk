@@ -11,6 +11,7 @@ import java.util.function.Consumer;
 
 public final class d extends j0 {
     public static final q3.d[] f153k;
+    public static final StringBuilder DEBUG_LOG = new StringBuilder();
 
     public final HashMap f154c;
     public final int f155d;
@@ -38,6 +39,7 @@ public final class d extends j0 {
         int i7;
         boolean z6;
         int iPow;
+        DEBUG_LOG.setLength(0);
         this.f154c = new HashMap();
         int i8 = 0;
         this.f156e = 0;
@@ -101,6 +103,12 @@ public final class d extends j0 {
                     }
                 }
                 int iF3 = ((v5.a) this.f10944a).f(4);
+                if (i9 == 0) {
+                    DEBUG_LOG.append("cb#").append(i8).append(": dims=").append(i12)
+                        .append(" entries=").append(i13).append(" ordered=").append(zG)
+                        .append(" lookupType=").append(iF3).append("\n");
+                    if (DEBUG_LOG.length() > 4000) DEBUG_LOG.delete(0, DEBUG_LOG.length() - 3000);
+                }
                 aVarD.j(1, (iF3 == 1 || iF3 == 2) ? 1 : 0);
                 if (iF3 != 0) {
                     if (iF3 != 1 && iF3 != 2) {
