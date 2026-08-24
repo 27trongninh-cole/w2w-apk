@@ -110,15 +110,19 @@ public final class d extends j0 {
                     if (DEBUG_LOG.length() > 4000) DEBUG_LOG.delete(0, DEBUG_LOG.length() - 3000);
                 }
                 aVarD.j(1, (iF3 == 1 || iF3 == 2) ? 1 : 0);
+                boolean debugThis = (i9 == 0 && i8 == 28);
+                if (debugThis) DEBUG_LOG.append("  [truoc lookup] pos=").append(((v5.a) this.f10944a).f15030d).append("\n");
                 if (iF3 != 0) {
                     if (iF3 != 1 && iF3 != 2) {
                         throw new UnsupportedOperationException("Unsupported codebook lookup type: " + iF3);
                     }
                     aVarD.i(32, 32, (v5.a) this.f10944a);
                     aVarD.i(32, 32, (v5.a) this.f10944a);
+                    if (debugThis) DEBUG_LOG.append("  [sau min+max] pos=").append(((v5.a) this.f10944a).f15030d).append("\n");
                     int i19 = aVarD.i(4, 4, (v5.a) this.f10944a) + dVar.f13443d;
                     int i20 = 1;
                     aVarD.j(1, ((v5.a) this.f10944a).g() ? 1 : 0);
+                    if (debugThis) DEBUG_LOG.append("  [sau valuebits+seq] pos=").append(((v5.a) this.f10944a).f15030d).append(" i19(valuebits)=").append(i19).append("\n");
                     if (iF3 == 1) {
                         iPow = (int) Math.pow(2.718281828459045d, Math.log(i13) / ((double) i12));
                         int i21 = iPow + 1;
@@ -132,9 +136,11 @@ public final class d extends j0 {
                     } else {
                         iPow = i13 * i12;
                     }
+                    if (debugThis) DEBUG_LOG.append("  [iPow(quantvals)=").append(iPow).append("]\n");
                     for (int i22 = 0; i22 < iPow; i22++) {
                         aVarD.i(i19, i19, (v5.a) this.f10944a);
                     }
+                    if (debugThis) DEBUG_LOG.append("  [sau doc xong values] pos=").append(((v5.a) this.f10944a).f15030d).append("\n");
                 }
                 byte[] bArrC = aVarD.c();
                 Iterator it = ((z) vkVar.f8890e).f1304a.values().iterator();
