@@ -119,7 +119,8 @@ public final class d extends j0 {
                     aVarD.i(32, 32, (v5.a) this.f10944a);
                     aVarD.i(32, 32, (v5.a) this.f10944a);
                     if (debugThis) DEBUG_LOG.append("  [sau min+max] pos=").append(((v5.a) this.f10944a).f15030d).append("\n");
-                    int i19 = aVarD.i(4, 4, (v5.a) this.f10944a) + dVar.f13443d;
+                    int valueBitsRaw = aVarD.i(4, 4, (v5.a) this.f10944a);
+                    int i19 = valueBitsRaw + 1; // ĐÚNG chuẩn Vorbis thật (value_bits+1), KHÔNG dùng +dVar.f13443d (sai)
                     int i20 = 1;
                     aVarD.j(1, ((v5.a) this.f10944a).g() ? 1 : 0);
                     if (debugThis) DEBUG_LOG.append("  [sau valuebits+seq] pos=").append(((v5.a) this.f10944a).f15030d).append(" i19(valuebits)=").append(i19).append("\n");
