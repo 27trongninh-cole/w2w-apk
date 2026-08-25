@@ -15,7 +15,7 @@ public final class z {
             int iF = aVarE.f(32);
             int iF2 = aVarE.f(32);
             aVarE.h(0, 1);
-            this.f1304a.put(Integer.valueOf(i7), Arrays.copyOfRange(aVarE.f15027a, iF, iF2 + iF));
+            this.f1304a.put(Integer.valueOf(i7), Arrays.copyOfRange(aVarE.f15027a, iF, iF2));
         }
     }
 }
