@@ -95,7 +95,7 @@ public class WemConverter {
         // ---- Residue ----
         int residueCount = aVarD.i(6, 6, src) + 1;
         for (int i = 0; i < residueCount; i++) {
-            int rtype = src.f(2);
+            int rtype = src.f(16);
             aVarD.j(16, rtype);
             aVarD.i(24, 24, src);
             aVarD.i(24, 24, src);
