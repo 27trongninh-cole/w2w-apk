@@ -38,8 +38,7 @@ public final class vk {
             this.f8889d = new a6.d(this, setupReader);
         } catch (RuntimeException e) {
             throw new RuntimeException(
-                "DEBUG codebook log (nhung cai gan nhat):\n" + a6.d.DEBUG_LOG.toString() +
-                "\n=== idPacket.len=" + idPacket.length + " hex=" + hex(idPacket, 16) +
+                "idPacket.len=" + idPacket.length + " hex=" + hex(idPacket, 16) +
                 " | commentPacket.len=" + (commentPacket == null ? -1 : commentPacket.length) +
                 " | setupPacket.len=" + setupPacket.length +
                 " || goc: " + e.getMessage(), e);
