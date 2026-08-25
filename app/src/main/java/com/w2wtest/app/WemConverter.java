@@ -121,6 +121,8 @@ public class WemConverter {
         // ---- Mapping ----
         int mapCount = aVarD.i(6, 6, src) + 1;
         for (int i = 0; i < mapCount; i++) {
+            int mappingType = src.f(16);
+            if (mappingType != 0) throw new UnsupportedOperationException("Mapping type != 0: " + mappingType);
             aVarD.j(16, 0);
             boolean submapsFlag = src.g();
             aVarD.j(1, submapsFlag ? 1 : 0);
