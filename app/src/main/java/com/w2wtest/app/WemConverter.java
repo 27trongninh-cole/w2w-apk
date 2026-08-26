@@ -96,7 +96,9 @@ public class WemConverter {
         int residueCount = aVarD.i(6, 6, src) + 1;
         for (int i = 0; i < residueCount; i++) {
             int rtype = src.f(16);
-            aVarD.j(16, rtype);
+            aVarD.j(2, rtype); // Wwise setup blob luu residue_type o 2 bit, KHONG PHAI 16 bit
+                                // nhu trong file .ogg goc (chuan Vorbis day du). Ghi sai do rong
+                                // o day lam lech toan bo bit phia sau (residue/mapping/mode).
             aVarD.i(24, 24, src);
             aVarD.i(24, 24, src);
             aVarD.i(24, 24, src);
@@ -123,7 +125,9 @@ public class WemConverter {
         for (int i = 0; i < mapCount; i++) {
             int mappingType = src.f(16);
             if (mappingType != 0) throw new UnsupportedOperationException("Mapping type != 0: " + mappingType);
-            aVarD.j(16, 0);
+            // KHONG ghi mapping_type vao setup blob: dinh dang rut gon cua Wwise luoc bo han
+            // field nay (chi co 1 gia tri hop le = 0 nen khong can luu, decoder tu dien lai).
+            // Ghi du 16 bit o day lam lech toan bo bit con lai cua moi mapping entry.
             boolean submapsFlag = src.g();
             aVarD.j(1, submapsFlag ? 1 : 0);
             int submaps = 1;
