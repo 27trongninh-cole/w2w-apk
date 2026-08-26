@@ -189,13 +189,35 @@ public class WemConverter {
                 if (segSize < 255) break;
             }
             if (assembled != null && assembled.length != 0) {
-                // THU NGHIEM: TAT han buoc cat bit packet-type + mode-selector (mod_packets).
-                // Gia thuyet: dinh dang that cua SBank co the KHONG dung mod_packets - tuc la
-                // audio packet duoc giu NGUYEN XI tu file .ogg chuan (van con du bit type +
-                // window flag), chi can them khung 2-byte length. Neu day la nguyen nhan gay
-                // cam lang, ban build nay se phat am duoc; neu van cam lang, se revert lai
-                // buoc cat bit va tim huong khac.
-                byte[] packetCompact = assembled;
+                // Dinh dang goi audio cua Wwise (mod_packets) CAT BO:
+                //   - 1 bit packet-type (luon = 0 doi voi audio packet trong Vorbis chuan)
+                //   - N bit mode-selector VAN GIU LAI (N = setupData.f158g)
+                //   - 2 bit window flag (previous/next_window_flag) NEU mode do la long-block
+                //     (setupData.f157f[mode] == true) - decoder Wwise tu suy ra 2 bit nay
+                //     bang cach nhin mode cua goi truoc/sau, khong can luu.
+                // Nguon: vgmstream (vorbis_custom_utils_wwise.c) - bang doi chieu:
+                //   Vorbis chuan: [packet_type:1][mode:N][window_flags:0-2][audio_data]
+                //   Wwise:        [mode:N][audio_data]
+                v5.a rd = v5.a.e(assembled);
+
+                boolean packetTypeBit = rd.g();
+                if (packetTypeBit) throw new RuntimeException("Khong phai audio packet (packet_type bit = 1)");
+
+                int modeNumber = rd.f(setupData.f158g);
+                if (modeNumber < 0 || modeNumber >= setupData.f157f.length)
+                    throw new RuntimeException("Mode number khong hop le: " + modeNumber);
+
+                boolean blockflag = setupData.f157f[modeNumber];
+                if (blockflag) {
+                    rd.g(); // previous_window_flag - Wwise bo, decoder tu suy ra
+                    rd.g(); // next_window_flag - Wwise bo, decoder tu suy ra
+                }
+
+                tmpD.a();
+                tmpD.j(setupData.f158g, modeNumber); // chi ghi lai N bit mode-selector
+                tmpD.k(rd);                          // noi toan bo bit con lai (audio_data) y nguyen
+
+                byte[] packetCompact = tmpD.c();
                 if (packetCompact.length > setupData.f160i) setupData.f160i = packetCompact.length;
                 packetOut.j(16, packetCompact.length);
                 packetOut.l(packetCompact);
