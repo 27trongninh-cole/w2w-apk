@@ -189,20 +189,16 @@ public class WemConverter {
                 if (segSize < 255) break;
             }
             if (assembled != null && assembled.length != 0) {
-                v5.a aVarE = v5.a.e(assembled);
-                if (assembled.length > setupData.f160i) setupData.f160i = assembled.length;
-                aVarE.f(1); // packet type bit (luon 0 cho audio packet)
-                int mg = setupData.f158g;
-                int modeIdx = tmpD.i(mg, mg, aVarE);
-                if (setupData.f157f[modeIdx]) { aVarE.f(1); aVarE.f(1); }
-                int remainBits = (aVarE.f15028b * 8) - aVarE.f15030d;
-                int padBits = 8 - setupData.f158g;
-                if (remainBits > padBits) tmpD.i(padBits, padBits, aVarE);
-                tmpD.k(aVarE);
-                byte[] packetCompact = tmpD.c();
+                // THU NGHIEM: TAT han buoc cat bit packet-type + mode-selector (mod_packets).
+                // Gia thuyet: dinh dang that cua SBank co the KHONG dung mod_packets - tuc la
+                // audio packet duoc giu NGUYEN XI tu file .ogg chuan (van con du bit type +
+                // window flag), chi can them khung 2-byte length. Neu day la nguyen nhan gay
+                // cam lang, ban build nay se phat am duoc; neu van cam lang, se revert lai
+                // buoc cat bit va tim huong khac.
+                byte[] packetCompact = assembled;
+                if (packetCompact.length > setupData.f160i) setupData.f160i = packetCompact.length;
                 packetOut.j(16, packetCompact.length);
                 packetOut.l(packetCompact);
-                tmpD.a();
                 setupData.f159h += packetOut.b();
                 fileOutputStream.write(packetOut.c());
                 packetOut.a();
