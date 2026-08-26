@@ -168,7 +168,13 @@ public class WemConverter {
         log.log("Setup blob: " + setupBlob.length + " byte.");
 
         // ---- Audio packet: dung dung logic that (bo bit packet-type + mode-selector, KHONG copy nguyen) ----
-        c6.a packetReader = new c6.a(cVar);
+        // QUAN TRONG: PHAI dung lai chinh packetReader ma vk() da dung de doc id/comment/setup
+        // (vkVar.packetReader), TUYET DOI KHONG new c6.a(cVar) rieng o day. Tao instance c6.a
+        // thu hai tren cung cVar se lam nhay/mat trang do co che prefetch dung chung con tro
+        // ben trong cVar - day chinh la nguyen nhan khien .wem cu chi co 3-4 audio packet
+        // "khong lo" (gop nham hang tram packet that lam mot) thay vi hang tram packet nho
+        // dung nhu out.ogg, gay cam hoan toan.
+        c6.a packetReader = vkVar.packetReader;
         v5.a packetOut = v5.a.d();
         v5.a tmpD = v5.a.d();
         while (!packetReader.f1917e) {
@@ -201,7 +207,14 @@ public class WemConverter {
                 v5.a rd = v5.a.e(assembled);
 
                 boolean packetTypeBit = rd.g();
-                if (packetTypeBit) throw new RuntimeException("Khong phai audio packet (packet_type bit = 1)");
+                if (packetTypeBit) {
+                    // packet_type bit = 1 => day KHONG phai audio packet ma la header packet
+                    // (comment=3 hoac setup=5) bi LAP LAI thua trong out.ogg (quirk cua native
+                    // wenc() - da quan sat thay 1 trang comment+setup bi ghi trung ngay sau
+                    // trang dau). Bo qua an toan, KHONG ghi vao .wem, doc tiep packet ke tiep.
+                    log.log("Bo qua 1 header packet du thua (khong phai audio) giua stream.");
+                    continue;
+                }
 
                 int modeNumber = rd.f(setupData.f158g);
                 if (modeNumber < 0 || modeNumber >= setupData.f157f.length)
