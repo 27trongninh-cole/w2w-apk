@@ -208,17 +208,27 @@ public class WemConverter {
         log.log("Audio packet stream: " + audioTempFile.length() + " byte, max packet: " + setupData.f160i);
 
         // ---- Build header ----
-        // f149h = setup_packet_offset, f150i = first_audio_packet_offset.
-        // Đây là offset TÍNH TỪ ĐẦU chunk "data" (không phải hằng số cố định, không phải loop
-        // start/end). Vì setup blob được ghi ngay đầu "data" (không có byte đệm phía trước),
-        // setup packet luôn ở offset 0, và audio packet đầu tiên bắt đầu ngay sau setup blob.
-        // (Tham chiếu: ww2ogg/wwriff.cpp - Packet(setup_packet, _data_offset + _setup_packet_offset, ...))
+        // QUAN TRỌNG: so sánh byte-by-byte với file .wem thật (SBank) cho thấy gói setup bên
+        // trong chunk "data" PHẢI có prefix 2-byte little-endian ghi độ dài, giống hệt cách
+        // từng audio packet đã có (packetOut.j(16, packetCompact.length)). Code cũ ghi thẳng
+        // setupBlob vào đầu "data" mà KHÔNG có prefix này -> parser đọc nhầm 2 byte đầu của
+        // setup blob thành "độ dài gói" (ra một số vô nghĩa) -> lệch toàn bộ bitstream từ đó.
+        byte[] setupLenPrefix = new byte[]{
+            (byte) (setupBlob.length & 0xFF),
+            (byte) ((setupBlob.length >> 8) & 0xFF)
+        };
+        int setupPacketTotalLen = setupLenPrefix.length + setupBlob.length; // 2 + setupBlob.length
+
+        // f149h = setup_packet_offset, f150i = first_audio_packet_offset (tính từ đầu chunk "data").
+        // Setup packet (kèm prefix) luôn nằm đầu "data" -> offset 0; audio bắt đầu ngay sau đó.
         idHeader.f149h = 0;
-        idHeader.f150i = setupBlob.length;
-        byte[] header = idHeader.o(setupBlob.length, (long) (audioTempFile.length() + setupBlob.length));
+        idHeader.f150i = setupPacketTotalLen;
+        byte[] header = idHeader.o(setupBlob.length,
+                (long) (audioTempFile.length() + setupPacketTotalLen));
 
         FileOutputStream out = new FileOutputStream(finalWemFile);
         out.write(header);
+        out.write(setupLenPrefix);
         out.write(setupBlob);
         java.io.FileInputStream fis = new java.io.FileInputStream(audioTempFile);
         byte[] buf = new byte[8192];
