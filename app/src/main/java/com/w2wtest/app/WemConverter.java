@@ -208,16 +208,13 @@ public class WemConverter {
         log.log("Audio packet stream: " + audioTempFile.length() + " byte, max packet: " + setupData.f160i);
 
         // ---- Build header ----
-        // Gán đúng 2 hằng số đặc biệt (KHÔNG PHẢI loop start/end như tên field gợi ý sai) -
-        // xác nhận qua đối chiếu byte-by-byte với file .wem thật từ SBank Editor:
-        // stereo/đa kênh = 16080/16560, mono = 18180/18636 (khớp code gốc W2WIO.d() đã đọc từ đầu).
-        if (wav.channels == 1) {
-            idHeader.f149h = 18180;
-            idHeader.f150i = 18636;
-        } else {
-            idHeader.f149h = 16080;
-            idHeader.f150i = 16560;
-        }
+        // f149h = setup_packet_offset, f150i = first_audio_packet_offset.
+        // Đây là offset TÍNH TỪ ĐẦU chunk "data" (không phải hằng số cố định, không phải loop
+        // start/end). Vì setup blob được ghi ngay đầu "data" (không có byte đệm phía trước),
+        // setup packet luôn ở offset 0, và audio packet đầu tiên bắt đầu ngay sau setup blob.
+        // (Tham chiếu: ww2ogg/wwriff.cpp - Packet(setup_packet, _data_offset + _setup_packet_offset, ...))
+        idHeader.f149h = 0;
+        idHeader.f150i = setupBlob.length;
         byte[] header = idHeader.o(setupBlob.length, (long) (audioTempFile.length() + setupBlob.length));
 
         FileOutputStream out = new FileOutputStream(finalWemFile);
