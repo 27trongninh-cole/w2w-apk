@@ -237,7 +237,8 @@ public class WemConverter {
         fis.close();
         out.close();
         audioTempFile.delete();
-        oggFile.delete();
+        // KHONG xoa oggFile luc nay de con test truc tiep file .ogg trung gian (debug am thanh cam).
+        // oggFile.delete();
 
         log.log("XONG! File .wem: " + finalWemFile.length() + " byte -> " + finalWemFile.getAbsolutePath());
         return finalWemFile;
