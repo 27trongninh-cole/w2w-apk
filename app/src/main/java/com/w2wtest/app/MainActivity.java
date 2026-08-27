@@ -103,7 +103,16 @@ public class MainActivity extends Activity {
                 File result = WemConverter.convert(wavFile, outDir, 0.4f, codebookBytes, this::log);
 
                 log("=== THANH CONG ===");
-                log("File luu tai: " + result.getAbsolutePath());
+                log("File luu tai (thu muc rieng app): " + result.getAbsolutePath());
+
+                String wemSavedPath = DownloadSaver.saveToDownloads(this, result, "application/octet-stream", this::log);
+                if (wemSavedPath != null) log("Da luu .wem vao: " + wemSavedPath);
+
+                File oggFile = new File(outDir, "out.ogg");
+                if (oggFile.exists()) {
+                    String oggSavedPath = DownloadSaver.saveToDownloads(this, oggFile, "audio/ogg", this::log);
+                    if (oggSavedPath != null) log("Da luu .ogg vao: " + oggSavedPath);
+                }
             } catch (Exception e) {
                 log("LOI: " + e.getMessage());
                 java.io.StringWriter sw = new java.io.StringWriter();

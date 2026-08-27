@@ -253,6 +253,20 @@ public class WemConverter {
                 + " | so header packet bo qua = " + skippedHeaderDebug
                 + " | mot so kich thuoc dau/moc: " + firstSizesDebug.toString());
         fileOutputStream.close();
+        {
+            long crcTemp = 0;
+            try {
+                java.util.zip.CRC32 crc32 = new java.util.zip.CRC32();
+                byte[] cbuf = new byte[8192];
+                int cn;
+                try (java.io.FileInputStream cfis = new java.io.FileInputStream(audioTempFile)) {
+                    while ((cn = cfis.read(cbuf)) != -1) crc32.update(cbuf, 0, cn);
+                }
+                crcTemp = crc32.getValue();
+            } catch (Exception ignored) {}
+            log.log("PACKET_DEBUG_MARKER_v9: audioTempFile CRC32=" + Long.toHexString(crcTemp)
+                    + " size=" + audioTempFile.length());
+        }
         log.log("Audio packet stream: " + audioTempFile.length() + " byte, max packet: " + setupData.f160i);
 
         // ---- Build header ----
@@ -285,6 +299,22 @@ public class WemConverter {
         fis.close();
         out.close();
         audioTempFile.delete();
+
+        // ---- Checksum de doi chieu voi file thuc te ban gui len (loai tru kha nang lay nham
+        // file cu / file cache khi copy ra khoi may) ----
+        long crc = 0;
+        try {
+            java.util.zip.CRC32 crc32 = new java.util.zip.CRC32();
+            byte[] cbuf = new byte[8192];
+            int cn;
+            try (java.io.FileInputStream cfis = new java.io.FileInputStream(finalWemFile)) {
+                while ((cn = cfis.read(cbuf)) != -1) crc32.update(cbuf, 0, cn);
+            }
+            crc = crc32.getValue();
+        } catch (Exception ignored) {}
+        log.log("PACKET_DEBUG_MARKER_v9: finalWemFile CRC32=" + Long.toHexString(crc)
+                + " size=" + finalWemFile.length()
+                + " lastModified=" + finalWemFile.lastModified());
         // KHONG xoa oggFile luc nay de con test truc tiep file .ogg trung gian (debug am thanh cam).
         // oggFile.delete();
 
