@@ -17,6 +17,7 @@ public class WemConverter {
     public interface Logger { void log(String msg); }
 
     public static File convert(File wavFile, File outDir, float quality, byte[] codebookBinBytes, Logger log) throws Exception {
+        log.log("PACKET_DEBUG_MARKER_v9: WemConverter.convert() build v9 dang chay.");
         WavInfo wav = WavInfo.read(wavFile.getAbsolutePath());
         log.log("WAV: " + wav.channels + " kenh, " + wav.sampleRate + " Hz, " + wav.numSamples + " sample.");
 
@@ -177,6 +178,10 @@ public class WemConverter {
         c6.a packetReader = vkVar.packetReader;
         v5.a packetOut = v5.a.d();
         v5.a tmpD = v5.a.d();
+        log.log("PACKET_DEBUG_MARKER_v9: bat dau doc audio packet (dung chung packetReader).");
+        int packetCountDebug = 0;
+        int skippedHeaderDebug = 0;
+        StringBuilder firstSizesDebug = new StringBuilder();
         while (!packetReader.f1917e) {
             byte[] assembled = null;
             while (true) {
@@ -213,6 +218,7 @@ public class WemConverter {
                     // wenc() - da quan sat thay 1 trang comment+setup bi ghi trung ngay sau
                     // trang dau). Bo qua an toan, KHONG ghi vao .wem, doc tiep packet ke tiep.
                     log.log("Bo qua 1 header packet du thua (khong phai audio) giua stream.");
+                    skippedHeaderDebug++;
                     continue;
                 }
 
@@ -237,8 +243,15 @@ public class WemConverter {
                 setupData.f159h += packetOut.b();
                 fileOutputStream.write(packetOut.c());
                 packetOut.a();
+                packetCountDebug++;
+                if (packetCountDebug <= 20 || packetCountDebug % 50 == 0) {
+                    firstSizesDebug.append(packetCompact.length).append(",");
+                }
             }
         }
+        log.log("PACKET_DEBUG_MARKER_v9: TONG SO AUDIO PACKET = " + packetCountDebug
+                + " | so header packet bo qua = " + skippedHeaderDebug
+                + " | mot so kich thuoc dau/moc: " + firstSizesDebug.toString());
         fileOutputStream.close();
         log.log("Audio packet stream: " + audioTempFile.length() + " byte, max packet: " + setupData.f160i);
 
