@@ -281,11 +281,19 @@ public class WemConverter {
         };
         int setupPacketTotalLen = setupLenPrefix.length + setupBlob.length; // 2 + setupBlob.length
 
-        // f149h = setup_packet_offset, f150i = first_audio_packet_offset (tính từ đầu chunk "data").
-        // Setup packet (kèm prefix) luôn nằm đầu "data" -> offset 0; audio bắt đầu ngay sau đó.
-        idHeader.f149h = 0;
-        idHeader.f150i = setupPacketTotalLen;
-        byte[] header = idHeader.o(setupBlob.length,
+        // f149h, f150i: SAU KHI SO SANH BYTE-BY-BYTE VOI 4 FILE .wem THAT DO SBANK TAO (dung
+        // luong tu 12KB den 3.4MB, hoan toan khac nhau ve setup/audio offset that su) - CA 4
+        // FILE DEU CO f149h=16080 VA f150i=16560 Y HET NHAU. Day KHONG PHAI offset trong file
+        // (gia thuyet cu, sai) ma la 2 HANG SO CO DINH (co le lien quan buffer/cau hinh encoder
+        // noi bo cua Wwise, khong phu thuoc noi dung file). Dung dung hang so nay thay vi tinh
+        // dong theo setup/audio offset.
+        idHeader.f149h = 16080;
+        idHeader.f150i = 16560;
+        // QUAN TRONG: so sanh voi 4 file that (SBank) cho thay header_i7 LUON = gia tri prefix
+        // 2-byte tren dia + 2 (tuc = setupPacketTotalLen), KHONG PHAI chi setupBlob.length nhu
+        // code cu. Thieu 2 byte nay khien SBank tinh sai diem bat dau audio packet dau tien,
+        // lech mat 2 byte ngay tu dau -> toan bo audio bi doc sai -> cam hoan toan.
+        byte[] header = idHeader.o(setupPacketTotalLen,
                 (long) (audioTempFile.length() + setupPacketTotalLen));
 
         FileOutputStream out = new FileOutputStream(finalWemFile);
