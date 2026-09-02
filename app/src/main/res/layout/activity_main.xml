@@ -16,7 +16,21 @@
         android:id="@+id/btnPick"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Chọn file WAV" />
+        android:text="Chọn file (WAV / MP3 / OGG)" />
+
+    <TextView
+        android:id="@+id/txtQualityLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Mức nén Vorbis (Quality): 5/10" />
+
+    <SeekBar
+        android:id="@+id/seekQuality"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="9"
+        android:progress="4" />
 
     <Button
         android:id="@+id/btnConvert"
